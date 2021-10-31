@@ -9,6 +9,7 @@
   "author": "Martin Steiger",
   "license": "ISC",
   "dependencies": {
+    "input-event": "^1.2.6",
     "axios": "^0.24.0"
   }
 }
