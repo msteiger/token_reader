@@ -5,41 +5,38 @@ class TokenReader {
   // See description at https://www.kernel.org/doc/Documentation/input/input.txt
   // Converted with regex from https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
  
-  constructor(devicename, callback) {
-    const map = new Map();
-	
-	map.set(2, '1');
-	map.set(3, '2');
-	map.set(4, '3');
-	map.set(5, '4');
-	map.set(6, '5');
-	map.set(7, '6');
-	map.set(8, '7');
-	map.set(9, '8');
-	map.set(10, '9');
-	map.set(11, '0');
-	map.set(28, '\n');
+  keyCodeMappings = new Map([
+    [2, '1'],
+    [3, '2'],
+    [4, '3'],
+    [5, '4'],
+    [6, '5'],
+    [7, '6'],
+ //   [8, '7'],
+ //   [9, '8'],
+    [10, '9'],
+    [11, '0'],
+    [28, '\n'],
+  ]);
 
+  constructor(devicename) {
     const input = new InputEvent(devicename);
+    this.keyboard = new InputEvent.Keyboard(input);
+  }
 
-    const keyboard = new InputEvent.Keyboard(input);
+  onTokenEvent(callback) {
+    var buffer = '';
 
+    this.keyboard.on('keypress', obj => {
+      const char = keyCodeMappings.get(obj.code) || '?';
 
-	var buffer = '';
-
-	keyboard.on('keypress', obj => {
-	  var char = map.get(obj.code);
-	  if (!char) {
-		char = '?';
-	  }
-
-	  if (char == '\n') {
-                 callback(buffer);
-		 buffer = '';
-	  } else {
-		buffer += char;
-	  }
-	});
+      if (char === '\n') {
+         callback(buffer);
+         buffer = '';
+      } else {
+        buffer += char;
+      }
+    });
   }
 }
 

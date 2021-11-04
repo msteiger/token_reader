@@ -32,14 +32,16 @@ function sendRequest(data) {
 }
 
 const name = '/dev/input/by-id/usb-HXGCoLtd_HIDKeys-event-kbd'
-new TokenReader(name, function(chunk) {
-      if (allowed.includes(chunk)) {
-          log("Grant access to " + chunk);
-          openDoor();
-      } else {
-          log("Forbid access to " + chunk);
-      }
-    });
+const reader = new TokenReader(name);
+
+reader.onTokenEvent(function(chunk) {
+    if (allowed.includes(chunk)) {
+      log("Grant access to " + chunk);
+      openDoor();
+    } else {
+      log("Forbid access to " + chunk);
+    }
+  });
 
 
 function intervalFunc() {
